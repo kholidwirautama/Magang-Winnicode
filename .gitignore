@@ -1,22 +1,39 @@
-# Environments
-/venv/
-/env/
-/.venv/
-/.env
+# Python environments
+venv/
+env/
+.venv/
+.env
+**/.env
 
-# Django
-/db.sqlite3
+# Django database
+*.sqlite3
+*.sqlite3-*
 
-# Python
+# Python cache
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Django migrations
+**/migrations/*
+!**/migrations/__init__.py
 
 # IDEs & Editors
-/.vscode/
-/.idea/
+.vscode/
+.idea/
 *.swp
 *.swo
 
 # OS
 .DS_Store
 Thumbs.db
+
+# Log & test files
+*.log
+*.coverage
+htmlcov/
+
+# Others
+*.bak
+*.tmp
