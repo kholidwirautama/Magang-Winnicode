@@ -1,0 +1,109 @@
+{% extends 'back/master.html' %}
+
+{% load static %}
+
+{% block mainblock %}
+<!-- Header -->
+<div class="content-header py-3 mb-4 border-bottom">
+    <div class="container-fluid">
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between">
+            <div>
+                <h1 class="h3 mb-0">
+                    <i class="fa fa-table me-2"></i>User Groups
+                </h1>
+                <small class="text-muted">You can add, edit and delete your data!</small>
+            </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 mt-2 mt-md-0">
+                    <li class="breadcrumb-item">User</li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <a href="/panel/manager/group/">Groups</a>
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- END Header -->
+
+<!-- Add Group Section(For user permission) Start -->
+<div class="container-fluid mb-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-7">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <strong>Add User To Group</strong>
+                </div>
+                <div class="card-body">
+                    <!-- Add User to Group Form Start -->
+                    <form action="{% url 'add_users_to_groups' pk=pk %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row g-3 mb-3 align-items-center">
+                            <div class="col-md-8">
+                                <select id="gname" name="gname" class="form-select" data-placeholder="Choose a Group..." required>
+                                    <!--  Dynamic groups Start -->
+                                    {% for i in group %}
+                                    <option value="{{ i.name }}">{{ i.name }}</option>
+                                    {% endfor %}
+                                    <!--  Dynamic groups End -->
+                                </select>
+                            </div>
+                            <div class="col-md-4 d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa fa-angle-right me-1"></i> Submit
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <!-- Add User to Group Form End -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Add Group Section(For user permission) End -->
+
+<!-- Groups List Section Start -->
+<div class="container-fluid">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <strong>Groups List</strong>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="example-datatable" class="table table-bordered table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Name</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cc in ugroup %}
+                        <tr>
+                            <td>{{ cc }}</td>
+                            <td class="text-center">
+                                <div class="btn-group">
+                                    <a href="{% url 'del_users_to_groups' pk=pk name=cc %}" data-bs-toggle="tooltip" title="Delete" class="btn btn-sm btn-danger">
+                                        <i class="fa fa-times"></i> Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Groups List Section End -->
+{% endblock %}
+
+{% block footerblock %}
+<!-- Load and execute javascript code used only in this page -->
+<script src="{% static 'back/js/pages/tablesDatatables.js' %}"></script>
+<script>
+    $(function(){ TablesDatatables.init(); });
+</script>
+{% endblock %}

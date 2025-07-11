@@ -1,0 +1,65 @@
+{% extends 'back/master.html' %}
+
+{% load static %}
+
+{% block mainblock %}
+<!-- Header -->
+<div class="content-header py-3 mb-4 border-bottom">
+    <div class="container-fluid">
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between">
+            <div>
+                <h1 class="h3 mb-0">
+                    <i class="fa fa-table me-2"></i>Edit Category
+                </h1>
+                <small class="text-muted">You can add, edit and delete your data!</small>
+            </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 mt-2 mt-md-0">
+                    <li class="breadcrumb-item">Category</li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <a href="/panel/category/edit/{{ cat.pk }}/">Edit</a>
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- END Header -->
+
+<!-- Main Form Section Start -->
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-xl-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <strong>Edit Category</strong>
+                </div>
+                <div class="card-body">
+                    <form action="{% url 'cat_edit' pk=cat.pk %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row g-2 align-items-center">
+                            <div class="col-md-8 mb-2 mb-md-0">
+                                <input type="text" id="name" name="name" class="form-control" placeholder="Category Title" value="{{ cat.name }}" required>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa fa-save me-1"></i> Save
+                                </button>
+                                {% comment %} <a href="{% url 'cat_list' %}" class="btn btn-secondary ms-2">Cancel</a> {% endcomment %}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Main Form Section End -->
+{% endblock %}
+
+{% block footerblock %}
+<script src="{% static 'back/js/pages/tablesDatatables.js' %}"></script>
+<script>
+    $(function(){ TablesDatatables.init(); });
+</script>
+{% endblock %}

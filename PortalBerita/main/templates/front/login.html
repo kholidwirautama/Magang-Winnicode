@@ -1,0 +1,175 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{ site.name }} | Login</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0">
+    <meta name="description" content="Login to News Portal">
+    <meta name="author" content="M. Kholid Wirautama">
+    <link rel="icon" type="image/png" href="{% static 'front/images/icons/logo.png' %}"/>
+    <link rel="stylesheet" href="{% static 'front/vendor/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'front/fonts/fontawesome-5.0.8/css/fontawesome-all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'front/fonts/iconic/css/material-design-iconic-font.min.css' %}">
+    <link rel="stylesheet" href="{% static 'front/css/main.css' %}">
+</head>
+
+<body>
+    <div class="login-section d-flex align-items-center justify-content-center" style="min-height:100vh;background:#f8fafc;">
+        <div class="login-card shadow p-4 rounded-4" style="max-width: 400px; width: 100%;">
+            <!-- Logo Portal Berita Start -->
+            <div class="login-logo-portal text-center mb-3">
+                <a href="/">
+                    <img src="{{ site.picurl|default_if_none:'' }}" alt="Portal Berita Logo"
+                         onerror="this.onerror=null;this.src='{% static 'front/images/icons/logo.png' %}';"
+                         style="max-width:300px; max-height:150px; width:100%; height:auto; object-fit:contain; display:inline-block;" />
+                </a>
+            </div>
+            <!-- Logo Portal Berita End -->
+            <div class="text-center mb-4">
+                <div class="small mt-2 text-muted">Welcome! Please login to your account</div>
+            </div>
+            <!-- Login Form -->
+            <form action="{% url 'mylogin' %}" method="post" id="form-login" autocomplete="off">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username or Email</label>
+                    <div class="input-group">
+                        <input type="text" id="username" name="username" class="form-control ms-2" placeholder="Enter username or email" required autofocus>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <input type="password" id="password" name="password" class="form-control ms-2" placeholder="Enter password" required>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <a href="#" id="show-reminder" class="small text-decoration-none">Forgot password?</a>
+                    </div>
+                    <button type="submit" class="btn btn-danger px-4">
+                        <i class="fas fa-sign-in-alt me-1"></i> Login
+                    </button>
+                </div>
+            </form>
+            <!-- END Login Form -->
+
+            <div class="divider my-3" style="border-bottom:1px solid #eee;" id="login-divider"></div>
+
+            <div class="text-center mb-2" id="register-link">
+                <span class="small">Don't have an account?</span>
+                <a href="#" id="show-register" class="small text-danger text-decoration-none">Register</a>
+            </div>
+
+            <!-- Register Form (hidden by default) -->
+            <form action="{% url 'myregister' %}" method="post" id="form-register" class="d-none" autocomplete="off">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="reg-name" class="form-label">Full Name</label>
+                    <div class="input-group">
+                        <input type="text" id="reg-name" name="name" class="form-control ms-2" placeholder="Full Name" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="reg-username" class="form-label">Username</label>
+                    <div class="input-group">
+                        <input type="text" id="reg-username" name="uname" class="form-control ms-2" placeholder="Username" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="reg-email" class="form-label">Email</label>
+                    <div class="input-group">
+                        <input type="email" id="reg-email" name="email" class="form-control ms-2" placeholder="Email" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="reg-password1" class="form-label">Password</label>
+                    <div class="input-group">
+                        <input type="password" id="reg-password1" name="password1" class="form-control ms-2" placeholder="Password" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="reg-password2" class="form-label">Confirm Password</label>
+                    <div class="input-group">
+                        <input type="password" id="reg-password2" name="password2" class="form-control ms-2" placeholder="Confirm Password" required>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="mb-3 d-flex align-items-center">
+                        <input class="form-check-input me-2" type="checkbox" id="terms" name="terms" required
+                            style="box-sizing: border-box; padding: 0; margin-top: 11px; margin-left: auto;">
+                        <label class="form-check-label mb-0" for="terms" style="margin-bottom:0 !important; font-size:13px; padding-top:10px;">
+                            I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#modal-terms">terms &amp; conditions</a>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-success px-4">
+                        <i class="fas fa-user-plus me-1"></i> Register
+                    </button>
+                </div>
+                <div class="divider my-3" style="border-bottom:1px solid #eee;" id="login-divider"></div>
+            <div class="text-center mb-2" id="register-link">
+                <span class="small">Already have an account?</span>
+                <a href="#" id="show-login" class="small text-danger text-decoration-none ms-1">Login</a>
+            </div>
+            </form>
+            <!-- END Register Form -->
+
+
+            <!-- Reminder Form (hidden by default) -->
+            <form action="#" method="post" id="form-reminder" class="d-none" autocomplete="off">
+                <div class="mb-3">
+                    <label for="reminder-email" class="form-label">Email</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                        <input type="email" id="reminder-email" name="reminder-email" class="form-control ms-2" placeholder="Enter your email" required>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <a href="#" id="show-login2" class="small text-decoration-none">Back to Login</a>
+                    <button type="submit" class="btn btn-danger px-4">
+                        <i class="fas fa-redo me-1"></i> Reset Password
+                    </button>
+                </div>
+            </form>
+            <!-- END Reminder Form -->
+
+            {% comment %} <div class="mt-4 text-center small text-muted">
+                &copy; 2025 <a href="http://www.github.com/kholidwirautama" target="_blank" class="text-decoration-none">M. Kholid Wirautama</a>
+            </div> {% endcomment %}
+        </div>
+
+        <script src="{% static 'front/vendor/jquery/jquery-3.2.1.min.js' %}"></script>
+        <script src="{% static 'front/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+        <script>
+            // Toggle forms
+            $(function() {
+                $('#show-register').click(function(e){
+                    e.preventDefault();
+                    $('#form-login').addClass('d-none');
+                    $('#form-reminder').addClass('d-none');
+                    $('#form-register').removeClass('d-none');
+                    $('#register-link').addClass('d-none');
+                    $('#login-divider').addClass('d-none');
+                });
+                $('#show-login, #show-login2').click(function(e){
+                    e.preventDefault();
+                    $('#form-register').addClass('d-none');
+                    $('#form-reminder').addClass('d-none');
+                    $('#form-login').removeClass('d-none');
+                    $('#register-link').removeClass('d-none');
+                    $('#login-divider').removeClass('d-none');
+                });
+                $('#show-reminder').click(function(e){
+                    e.preventDefault();
+                    $('#form-login').addClass('d-none');
+                    $('#form-register').addClass('d-none');
+                    $('#form-reminder').removeClass('d-none');
+                    $('#register-link').addClass('d-none');
+                    $('#login-divider').addClass('d-none');
+                });
+            });
+        </script>
+</body>
+</html>

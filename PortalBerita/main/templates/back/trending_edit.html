@@ -1,0 +1,77 @@
+{% extends 'back/master.html' %}
+
+{% load static %}
+
+<!-- Add Editor(CKEditor) for Trending Edit Page Start -->
+{% block headblock %}
+    <script src="{% static 'ckeditor/ckeditor.js' %}"></script>
+{% endblock %}
+<!-- Add Editor(CKEditor) for Trending Edit Page End -->
+
+{% block mainblock %}
+<!-- Header -->
+<div class="content-header py-3 mb-4 border-bottom">
+    <div class="container-fluid">
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between">
+            <div>
+                <h1 class="h3 mb-0">
+                    <i class="fa fa-table me-2"></i>Edit Trending
+                </h1>
+                <small class="text-muted">You can add, edit and delete your data!</small>
+            </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 mt-2 mt-md-0">
+                    <li class="breadcrumb-item">Trending</li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <a href="/panel/trending/edit/{{ pk }}">Edit</a>
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- END Header -->
+
+<!-- Main Form Section Start -->
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-7">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <strong>Edit Trending</strong>
+                </div>
+                <div class="card-body">
+                    <!-- Trending Edit Form Start -->
+                    <form action="{% url 'trending_edit' pk=pk %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row g-3 mb-3 align-items-center">
+                            <!-- Trending Input Start -->
+                            <div class="col-md-8">
+                                <input type="text" id="txt" name="txt" value="{{ mytxt }}" class="form-control" placeholder="Trending">
+                            </div>
+                            <!-- Trending Input End -->
+                            <!-- Submit Button Start -->
+                            <div class="col-md-4 d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa fa-angle-right me-1"></i> Submit
+                                </button>
+                            </div>
+                            <!-- Submit Button End -->
+                        </div>
+                    </form>
+                    <!-- Trending Edit Form End -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Main Form Section End -->
+{% endblock %}
+
+{% block footerblock %}
+<!-- Load and execute javascript code used only in this page -->
+<script src="{% static 'back/js/pages/tablesDatatables.js' %}"></script>
+<script>
+    $(function(){ TablesDatatables.init(); });
+</script>
+{% endblock %}

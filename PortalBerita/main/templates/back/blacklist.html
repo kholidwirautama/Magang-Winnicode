@@ -1,0 +1,100 @@
+{% extends 'back/master.html' %}
+
+{% load static %}
+
+{% block mainblock %}
+<!-- Header -->
+<div class="content-header py-3 mb-4 border-bottom">
+    <div class="container-fluid">
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between">
+            <div>
+                <h1 class="h3 mb-0">
+                    <i class="fa fa-table me-2"></i>Black List
+                </h1>
+                <small class="text-muted">You can add, edit and delete your data!</small>
+            </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 mt-2 mt-md-0">
+                    <li class="breadcrumb-item">Black</li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <a href="/blacklist/">List</a>
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- END Header -->
+
+<!-- IP Add Start -->
+<div class="container-fluid mb-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-7">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <strong>Add IP</strong>
+                </div>
+                <div class="card-body">
+                    <form action="{% url 'ip_add' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row g-2 align-items-center">
+                            <div class="col-md-8">
+                                <input type="text" id="ip" name="ip" class="form-control" placeholder="IP" required>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa fa-angle-right me-1"></i> Submit
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- IP Add End -->
+
+<!-- Datatables Content -->
+<div class="container-fluid">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <strong>Black List</strong>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="example-datatable" class="table table-bordered table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th>IP</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cc in ip %}
+                        <tr>
+                            <td class="text-center">{{ cc.pk }}</td>
+                            <td>{{ cc.ip }}</td>
+                            <td class="text-center">
+                                <a href="{% url 'ip_del' pk=cc.pk %}" data-bs-toggle="tooltip" title="Delete" class="btn btn-sm btn-danger">
+                                    <i class="fa fa-times me-1"></i> Delete
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END Datatables Content -->
+{% endblock %}
+
+{% block footerblock %}
+<script src="{% static 'back/js/pages/tablesDatatables.js' %}"></script>
+<script>
+    $(function(){ TablesDatatables.init(); });
+</script>
+{% endblock %}

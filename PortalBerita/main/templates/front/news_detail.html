@@ -1,0 +1,309 @@
+{% extends 'front/master.html' %}
+
+
+{% load static %}
+
+{% load qr_code %}
+
+
+{% block headblock %}
+<title>{{ site.name }} | {{ shownews.0.name }}</title>
+{% endblock %}
+
+
+
+
+{% block mainblock %}
+
+
+{% for i in shownews %}
+<!-- Breadcrumb -->
+<div class="container">
+    <div class="f2-s-1 p-r-30 m-tb-6 d-flex align-items-center">
+        <a href="/" class="breadcrumb-item f1-s-3 cl9">Home</a>
+        <span class="mx-2">/</span>
+        <a class="breadcrumb-item f1-s-3 cl9">News</a>
+        <span class="mx-2">/</span>
+        <span class="breadcrumb-item f1-s-3 cl9">{{ i.name }}</span>
+    </div>
+</div>
+
+<!-- Content -->
+<section class="bg0 p-b-140 p-t-10">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8 p-b-30">
+                <div class="p-r-10 p-r-0-sr991">
+                    <!-- Blog Detail -->
+                    <div class="p-b-70">
+                        <a href="#" class="f1-s-10 cl2 hov-cl10 trans-03 text-uppercase">
+                            {{ i.catname }}
+                        </a>
+
+                        <h3 class="f1-l-3 cl2 p-b-16 p-t-33 respon2">
+                            {{ i.name }}
+                        </h3>
+
+                        <div class="flex-wr-s-s p-b-40">
+                            <span class="f1-s-3 cl8 m-r-15">
+                                <a href="#" class="f1-s-4 cl8 hov-cl10 trans-03">
+                                    by {{ i.writer }}
+                                </a>
+
+                                <span class="m-rl-3">-</span>
+
+                                <span>
+                                    {{ i.date }}
+                                </span>
+                            </span>
+
+                            <span class="f1-s-3 cl8 m-r-15">
+                                {{ i.show }} Views
+                            </span>
+
+                            <a href="#" class="f1-s-3 cl8 hov-cl10 trans-03 m-r-15">
+                                {{ cmcount }} Comment
+                            </a>
+                        </div>
+
+                        <div class="wrap-pic-max-w p-b-30">
+                            <img src="{{ i.picurl }}" alt="IMG">
+                        </div>
+
+                        <p align="justify" class="f1-s-11 cl6 p-b-25">
+                            {{ i.body_txt|safe }} <!-- need to use safe when we use ckeditor -->
+                        </p>
+                    </div>
+
+                    <br><br><br>
+
+                <!-- Comment Card Start -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body p-4">
+                        <!-- Leave a Comment (Top) -->
+                        <h5 class="fw-bold mb-3">Komentar ({{ cmcount }})</h5>
+                        <form action="{% url 'news_cm_add' pk=code %}" method="POST" class="mb-4" id="commentForm">
+                            {% csrf_token %}
+                            <div class="mb-2">
+                                <textarea class="form-control" id="commentTextarea" name="msg" rows="3" maxlength="1000" placeholder="Tulis Komentar..." required></textarea>
+                                <div class="form-text text-end" id="charCount">1000 Karakter tersisa</div>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                {% if user.is_authenticated %}
+                                    <button class="btn btn-primary px-4 rounded-pill" type="submit">
+                                        Kirim <i class="fa fa-paper-plane ms-1"></i>
+                                    </button>
+                                {% else %}
+                                    <a href="{% url 'mylogin' %}" class="btn btn-primary px-4 rounded-pill">
+                                        Login untuk berkomentar
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </form>
+                        <hr>
+                        <!-- Comment List -->
+                        <!-- Comment List -->
+                        <div class="mb-3">
+                            <div class="table-responsive">
+                                <table class="table align-middle table-borderless">
+                                    <tbody>
+                                        {% for cm in comment|slice:":5" %}
+                                        <tr>
+                                            <td style="width:60px;">
+                                                <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center mx-auto" style="width:48px;height:48px;font-size:1.5rem;">
+                                                    <i class="fa fa-user"></i>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                                    <span class="fw-bold">{{ cm.name }}</span>
+                                                    <small class="text-muted">{{ cm.date }} &middot; {{ cm.time }}</small>
+                                                </div>
+                                                <div class="text-dark mb-2" style="margin-top:1px;">
+                                                    {{ cm.cm }}
+                                                </div>
+                                                {% comment %} <div class="d-flex gap-2">
+                                                    <button type="button" class="btn btn-sm btn-outline-primary d-flex align-items-center" disabled>
+                                                        <i class="fa fa-thumbs-up me-1"></i> Like
+                                                        <span class="badge bg-primary ms-2">{{ cm.like_count|default:0 }}</span>
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger d-flex align-items-center" disabled>
+                                                        <i class="fa fa-flag me-1"></i> Report
+                                                    </button>
+                                                </div> {% endcomment %}
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="2" class="text-muted text-center">Belum ada komentar.</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        {% if cmcount > 5 %}
+                        <div class="text-center">
+                            <button id="loadMoreBtn" class="btn btn-outline-secondary btn-sm mt-2">Lihat lebih banyak</button>
+                        </div>
+
+
+                        <script>
+                            // Simple "Lihat lebih banyak" logic (client-side, for demo)
+                            let allComments = [{% for cm in comment %}`{{ cm.name|escapejs }}|{{ cm.date }}|{{ cm.time }}|{{ cm.cm|escapejs }}`{% if not forloop.last %},{% endif %}{% endfor %}];
+                            let shown = 5;
+                            document.getElementById('loadMoreBtn').addEventListener('click', function() {
+                                let list = document.querySelector('.card-body .mb-3');
+                                let html = '';
+                                for (let i = 0; i < Math.min(shown + 5, allComments.length); i++) {
+                                    let parts = allComments[i].split('|');
+                                    html += `<div class="media mb-4 p-3 rounded bg-light">
+                                        <div class="me-3 d-flex align-items-start">
+                                            <span class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center" style="width:48px;height:48px;font-size:1.5rem;">
+                                                <i class="fa fa-user"></i>
+                                            </span>
+                                        </div>
+                                        <div class="media-body w-100">
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <span class="fw-bold">${parts[0]}</span>
+                                                <small class="text-muted">${parts[1]} &middot; ${parts[2]}</small>
+                                            </div>
+                                            <div class="text-dark" style="margin-top:1px;">
+                                                ${parts[3]}
+                                            </div>
+                                        </div>
+                                    </div>`;
+                                }
+                                list.innerHTML = html;
+                                shown += 5;
+                                if (shown >= allComments.length) {
+                                    document.getElementById('loadMoreBtn').style.display = 'none';
+                                }
+                            });
+                        </script>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Comment Card End -->
+                <script>
+                    // Character counter
+                    const textarea = document.getElementById('commentTextarea');
+                    const charCount = document.getElementById('charCount');
+                    if (textarea && charCount) {
+                        textarea.addEventListener('input', function() {
+                            const max = 1000;
+                            const len = textarea.value.length;
+                            charCount.textContent = (max - len) + ' Karakter tersisa';
+                        });
+                    }
+                </script>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-md-10 col-lg-4 p-b-30">
+                <div class="p-l-10 p-rl-0-sr991 p-t-70">
+                    <!-- Category -->
+                    <div class="p-b-60">
+                        <div class="how2 how2-cl4 flex-s-c">
+                            <h3 class="f1-m-2 cl3 tab01-title">
+                                Category
+                            </h3>
+                        </div>
+
+                        <ul class="p-t-35">
+
+                            {% for p in cat %}
+                            {% if p.count != 0 %}
+                            <li class="how-bor3 p-rl-4">
+                                <a href="#" class="dis-block f1-s-10 text-uppercase cl2 hov-cl10 trans-03 p-tb-13">
+                                    {{ p.name }} ({{ p.count }})
+                                </a>
+                            </li>
+                            {% endif %}
+                            {% endfor %}
+
+
+                        </ul>
+                    </div>
+
+
+            <!-- Popular Posts Details Start -->
+                    <div class="p-b-30">
+                        <div class="how2 how2-cl4 flex-s-c">
+                            <h3 class="f1-m-2 cl3 tab01-title">
+                                Popular Post
+                            </h3>
+                        </div>
+
+                        <ul class="p-t-35">
+
+                            {% for pop in popnews|slice:":3" %}
+                            {% if pop.ocatid == i.ocatid %}
+                            <li class="flex-wr-sb-s p-b-30">
+                                <a href="{% url 'news_detail' word=pop.name %}" class="size-w-10 wrap-pic-w hov1 trans-03">
+                                    <img src="{{ pop.picurl }}" alt="IMG">
+                                </a>
+
+                                <div class="size-w-11">
+                                    <h6 class="p-b-4">
+                                        <a href="#" class="f1-s-5 cl3 hov-cl10 trans-03">
+                                            {{ pop.name }}
+                                        </a>
+                                    </h6>
+
+                                    <span class="cl8 txt-center p-b-24">
+                                        <a href="{% url 'news_detail' word=pop.name %}" class="f1-s-6 cl8 hov-cl10 trans-03">
+                                            {{ pop.catname }}
+                                        </a>
+
+                                        <span class="f1-s-3 m-rl-3">
+                                            -
+                                        </span>
+
+                                        <span class="f1-s-3">
+                                            {{ pop.date }}
+                                        </span>
+                                    </span>
+                                </div>
+                            </li>
+                            {% endif %}
+                            {% endfor %}
+
+
+                        </ul>
+                    </div>
+
+                    <!-- Tag -->
+                    <div>
+                        <div class="how2 how2-cl4 flex-s-c m-b-30">
+                            <h3 class="f1-m-2 cl3 tab01-title">
+                                Tags
+                            </h3>
+                        </div>
+
+                    <!-- Dynamic Tags View in News Details Page Start -->
+                        <div class="flex-wr-s-s m-rl--5">
+
+                            {% for tagname in tag %}
+                            <a href="#" class="flex-c-c size-h-2 bo-1-rad-20 bocl12 f1-s-1 cl8 hov-btn2 trans-03 p-rl-20 p-tb-5 m-all-5">
+                                {{ tagname }}
+                            </a>
+                            {% endfor %}
+
+                        </div>
+                    <!-- Dynamic Tags View in News Details Page End -->
+                    </div>
+
+                    <br><br>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endfor %}
+
+{% endblock %}

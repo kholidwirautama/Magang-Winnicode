@@ -1,0 +1,63 @@
+{% extends 'back/master.html' %}
+
+{% load static %}
+
+{% block mainblock %}
+<!-- Header -->
+<div class="content-header py-3 mb-4 border-bottom">
+    <div class="container-fluid">
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between">
+            <div>
+                <h1 class="h3 mb-0">
+                    <i class="fa fa-key me-2"></i>Change Password
+                </h1>
+                <small class="text-muted">Update your password securely!</small>
+            </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 mt-2 mt-md-0">
+                    <li class="breadcrumb-item">Change</li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <a href="/panel/change/pass/">Password</a>
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- END Header -->
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-xl-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <strong>Change Password</strong>
+                </div>
+                <div class="card-body">
+                    <form action="{% url 'change_pass' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="password" id="oldpass" name="oldpass" class="form-control" placeholder="Old Password" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" id="newpass" name="newpass" class="form-control" placeholder="New Password" required>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-angle-right me-1"></i> Submit
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block footerblock %}
+<script src="{% static 'back/js/pages/tablesDatatables.js' %}"></script>
+<script>
+    $(function(){ TablesDatatables.init(); });
+</script>
+{% endblock %}

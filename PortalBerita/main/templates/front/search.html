@@ -1,0 +1,87 @@
+{% extends 'front/master.html' %}
+
+{% block headblock %}
+<title>{{ site.name }} | Search</title>
+{% endblock %}
+
+{% block mainblock %}
+
+<section class="bg0 p-t-60 p-b-40">
+  <div class="container">
+    <div class="how2 how2-cl4 flex-s-c m-b-35">
+      <h3 class="f1-m-2 cl3 tab01-title">
+        Hasil Pencarian: <span id="search-keyword"></span>
+      </h3>
+    </div>
+    <div class="row p-t-35" id="search-news-section">
+      <!-- JavaScript -->
+    </div>
+  </div>
+</section>
+
+<script>
+function getAuthHeaders() {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+        return { 'Authorization': 'Bearer ' + token };
+    }
+    return {};
+}
+
+// Ambil keyword dari query string (?q=...)
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param) || '';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const keyword = getQueryParam('q');
+    document.getElementById('search-keyword').textContent = keyword;
+
+    if (!keyword) {
+        document.getElementById('search-news-section').innerHTML = '<p>Masukkan kata kunci pencarian.</p>';
+        return;
+    }
+
+    fetch(`/api/news/?search=${encodeURIComponent(keyword)}`)
+    .then(res => res.json())
+    .then(data => {
+        let html = '';
+        if (data.length === 0) {
+            html = '<p>Tidak ada berita ditemukan untuk kata kunci tersebut.</p>';
+        } else {
+            data.forEach(news => {
+                html += `
+                <div class="col-sm-6 col-md-4">
+                  <div class="m-b-45">
+                    <a href="/news/${news.name}/" class="wrap-pic-w hov1 trans-03">
+                      <img style="display: inline-block; width: 330px; height: 200px;" src="${news.picurl}" alt="${news.name}" />
+                    </a>
+                    <div class="p-t-16">
+                      <h5 class="p-b-5">
+                        <a href="/news/${news.name}/" class="f1-s-5 cl3 hov-cl10 trans-03">
+                          ${news.name}
+                        </a>
+                      </h5>
+                      <span class="cl8">
+                        <a href="#" class="f1-s-6 cl8 hov-cl10 trans-03">
+                          ${news.catname}
+                        </a>
+                        <span class="f1-s-3 m-rl-3">-</span>
+                        <span class="f1-s-3">${news.date}${news.time ? ' | ' + news.time : ''}</span>
+                      </span>
+                      <p class="f1-s-1 cl6 p-t-18">
+                        ${news.short_txt || ''}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                `;
+            });
+        }
+        document.getElementById('search-news-section').innerHTML = html;
+    });
+});
+</script>
+
+{% endblock %}

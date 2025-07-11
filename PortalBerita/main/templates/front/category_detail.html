@@ -1,0 +1,71 @@
+{% extends 'front/master.html' %} {% block headblock %}
+<title>{{ site.name }} | {{ category.name }}</title>
+{% endblock %} {% block mainblock %}
+
+<section class="bg0 p-t-60 p-b-40">
+  <div class="container">
+    <div class="how2 how2-cl4 flex-s-c m-b-35">
+      <h3 class="f1-m-2 cl3 tab01-title">
+        Berita Kategori: {{ category.name }}
+      </h3>
+    </div>
+    <div class="row p-t-35" id="category-news-section">
+      <!-- Akan diisi oleh JavaScript -->
+    </div>
+  </div>
+</section>
+
+<script>
+    function getAuthHeaders() {
+        const token = localStorage.getItem('access_token');
+        if (token) {
+            return { 'Authorization': 'Bearer ' + token };
+        }
+        return {};
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const categoryId = {{ category.pk }};
+      // Hapus headers: getAuthHeaders() agar tidak mengirim Authorization
+      fetch(`/api/news/?ocatid=${categoryId}`)
+      .then(res => res.json())
+      .then(data => {
+          let html = '';
+          if (data.length === 0) {
+              html = '<p>Tidak ada berita pada kategori ini.</p>';
+          } else {
+              data.forEach(news => {
+                  html += `
+                  <div class="col-sm-6 col-md-4">
+                    <div class="m-b-45">
+                      <a href="/news/${news.name}/" class="wrap-pic-w hov1 trans-03">
+                        <img style="display: inline-block; width: 330px; height: 200px;" src="${news.picurl}" alt="${news.name}" />
+                      </a>
+                      <div class="p-t-16">
+                        <h5 class="p-b-5">
+                          <a href="/news/${news.name}/" class="f1-s-5 cl3 hov-cl10 trans-03">
+                            ${news.name}
+                          </a>
+                        </h5>
+                        <span class="cl8">
+                          <a href="#" class="f1-s-6 cl8 hov-cl10 trans-03">
+                            ${news.catname}
+                          </a>
+                          <span class="f1-s-3 m-rl-3">-</span>
+                          <span class="f1-s-3">${news.date}${news.time ? ' | ' + news.time : ''}</span>
+                        </span>
+                        <p class="f1-s-1 cl6 p-t-18">
+                          ${news.short_txt}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  `;
+              });
+          }
+          document.getElementById('category-news-section').innerHTML = html;
+      });
+  });
+</script>
+
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'back/master.html' %}
+
+{% load static %}
+
+{% block mainblock %}
+<!-- Header -->
+<div class="content-header py-3 mb-4 border-bottom">
+    <div class="container-fluid">
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between">
+            <div>
+                <h1 class="h3 mb-0">
+                    <i class="fa fa-table me-2"></i>Add SubCategory
+                </h1>
+                <small class="text-muted">You can add, edit and delete your data!</small>
+            </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 mt-2 mt-md-0">
+                    <li class="breadcrumb-item">SubCategory</li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <a href="/panel/subcategory/add">Add</a>
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- END Header -->
+
+<!-- Main Form Section Start -->
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-7">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <strong>Add SubCategory</strong>
+                </div>
+                <div class="card-body">
+                    <!-- SubCategory Add Form Start -->
+                    <form action="{% url 'subcat_add' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row g-3 mb-3">
+                            <!-- SubCategory Title Input Start -->
+                            <div class="col-md-6">
+                                <input type="text" id="name" name="name" class="form-control" placeholder="SubCategory Title" required>
+                            </div>
+                            <!-- SubCategory Title Input End -->
+
+                            <!-- Category Select Start -->
+                            <div class="col-md-6">
+                                <select id="cat" name="cat" class="form-select" data-placeholder="Choose a Category..." required>
+                                    <option value="" disabled selected>Choose a Category...</option>
+                                    <!--  Dynamic category Start -->
+                                    {% for i in cat %}
+                                    <option value="{{ i.pk }}">{{ i.name }}</option>
+                                    {% endfor %}
+                                    <!--  Dynamic category End -->
+                                </select>
+                            </div>
+                            <!-- Category Select End -->
+                        </div>
+
+                        <!-- Submit Button Start -->
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-angle-right me-1"></i> Submit
+                            </button>
+                        </div>
+                        <!-- Submit Button End -->
+                    </form>
+                    <!-- SubCategory Add Form End -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Main Form Section End -->
+{% endblock %}
+
+{% block footerblock %}
+<!-- Load and execute javascript code used only in this page -->
+<script src="{% static 'back/js/pages/tablesDatatables.js' %}"></script>
+<script>
+    $(function(){ TablesDatatables.init(); });
+</script>
+{% endblock %}

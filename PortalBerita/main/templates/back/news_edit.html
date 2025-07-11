@@ -1,0 +1,131 @@
+{% extends 'back/master.html' %}
+
+{% load static %}
+
+<!-- Add Editor(CKEditor) for News Edit Page Start -->
+{% block headblock %}
+    <script src="{% static 'ckeditor/ckeditor.js' %}"></script>
+{% endblock %}
+<!-- Add Editor(CKEditor) for News Edit Page End -->
+
+{% block mainblock %}
+<!-- Header -->
+<div class="content-header py-3 mb-4 border-bottom">
+    <div class="container-fluid">
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between">
+            <div>
+                <h1 class="h3 mb-0">
+                    <i class="fa fa-table me-2"></i>Edit News
+                </h1>
+                <small class="text-muted">You can add, edit and delete your data!</small>
+            </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 mt-2 mt-md-0">
+                    <li class="breadcrumb-item">News</li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <a href="/panel/news/edit/{{ pk }}">Edit</a>
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- END Header -->
+
+<!-- Main Form Section Start -->
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-9">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <strong>Edit News</strong>
+                </div>
+                <div class="card-body">
+                    <!-- News Edit Form Start -->
+                    <form action="{% url 'news_edit' pk=pk %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row g-3 mb-3">
+                            <!-- News Title Input Start -->
+                            <div class="col-md-6">
+                                <input type="text" id="newstitle" value="{{ news.name }}" name="newstitle" class="form-control" placeholder="News Title" required>
+                            </div>
+                            <!-- News Title Input End -->
+
+                            <!-- Category Select Start -->
+                            <div class="col-md-6">
+                                <select id="newscat" name="newscat" class="form-select" data-placeholder="Choose a Category..." required>
+                                    <option value="{{ news.catid }}">{{ news.catname }}</option>
+                                    <!--  Dynamic category Start -->
+                                    {% for i in cat %}
+                                    <option value="{{ i.pk }}">{{ i.catname }} | {{ i.name }}</option>
+                                    {% endfor %}
+                                    <!--  Dynamic category End -->
+                                </select>
+                            </div>
+                            <!-- Category Select End -->
+                        </div>
+
+                        <!-- Short Text Editor Start -->
+                        <div class="mb-3">
+                            <label for="newstxtshort" class="form-label">Short Text</label>
+                            <textarea id="newstxtshort" name="newstxtshort" rows="4" class="form-control" placeholder="Short txt">{{ news.short_txt }}</textarea>
+                            <script>
+                                CKEDITOR.replace('newstxtshort');
+                            </script>
+                        </div>
+                        <!-- Short Text Editor End -->
+
+                        <!-- Body Text Editor Start -->
+                        <div class="mb-3">
+                            <label for="newstxt" class="form-label">Body Text</label>
+                            <textarea id="newstxt" name="newstxt" rows="7" class="form-control" placeholder="Body txt">{{ news.body_txt }}</textarea>
+                            <script>
+                                CKEDITOR.replace('newstxt');
+                            </script>
+                        </div>
+                        <!-- Body Text Editor End -->
+
+                        <div class="row g-3 mb-3">
+                            <!-- Photo Upload Section Start -->
+                            <div class="col-md-6">
+                                <label for="myfile" class="form-label">Photo</label>
+                                <input type="file" id="myfile" name="myfile" class="form-control">
+                                <br>
+                                <!-- Tags Section Start -->
+                                <label for="tag" class="form-label">Tags</label>
+                                <textarea id="tag" name="tag" rows="2" class="form-control" placeholder="Tags">{{ news.tag }}</textarea>
+                                <!-- Tags Section End -->
+                            </div>
+                            <!-- Photo Upload Section End -->
+
+                            <!-- Current Photo Preview Start -->
+                            <div class="col-md-6 d-flex align-items-center justify-content-center">
+                                <img style="max-width: 350px; max-height: 250px; width: 100%; object-fit: cover; border-radius: 8px;" src="{{ news.picurl }}" alt="Current Photo">
+                            </div>
+                            <!-- Current Photo Preview End -->
+                        </div>
+
+                        <!-- Submit Button Start -->
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-angle-right me-1"></i> Submit
+                            </button>
+                        </div>
+                        <!-- Submit Button End -->
+                    </form>
+                    <!-- News Edit Form End -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Main Form Section End -->
+{% endblock %}
+
+{% block footerblock %}
+<!-- Load and execute javascript code used only in this page -->
+<script src="{% static 'back/js/pages/tablesDatatables.js' %}"></script>
+<script>
+    $(function(){ TablesDatatables.init(); });
+</script>
+{% endblock %}
